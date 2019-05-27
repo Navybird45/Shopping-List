@@ -10,13 +10,32 @@ def show_help():
     clear_screen()
     print("What should we pick up at the store? Enter items below.")
     print("""
-Enter 'DONE' or 'QUIT' to stop adding items.
 Enter 'HELP' for this help.
-Enter 'SHOW' to see your vcurrent list.
+Enter 'SHOW' to see your current list.
+Enter 'MOVE' to move an item on your list.
 Enter 'REMOVE' to delete an item from your list.
 Enter 'CLEAR' to clear your list.
+Enter 'DONE' or 'QUIT' to stop adding items.
 """)
-        
+
+def move_item():
+    if len(shopping_list) > 1:
+        show_list()
+        while True:
+            try:
+                item_to_move = shopping_list.pop((int(input("What item number would you like to move?\n> ")))-1)
+                break
+            except ValueError:
+                print("Please enter a number")
+                continue
+            except IndexError:
+                print("Please enter a valid number")
+                continue
+        shopping_list.insert((int(input("What position should {} go in?\n> ".format(item_to_move)))-1),item_to_move)
+        show_list()
+    else:
+        print("Your list has too few items to move!")
+
 def add_to_list(item):
     show_list()
     if len(shopping_list):
@@ -81,6 +100,9 @@ while True:
         continue
     elif new_item.upper() == "REMOVE":
         remove_from_list()
+        continue
+    elif new_item.upper() == "MOVE":
+        move_item()
         continue
     if new_item.upper() == "CLEAR":
         clear_list()
