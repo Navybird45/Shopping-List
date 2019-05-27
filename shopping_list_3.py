@@ -57,7 +57,10 @@ def add_to_list(item):
     show_list() 
 
 def clear_list():
-    confirm_clear = input("Are you sure you would like to clear your list?\ny or n \n >")
+    confirm_clear = input("""
+    Are you sure you would like to clear your list? 
+    [y]es or [n]o 
+    >""")
     if confirm_clear.upper() == "Y":
         while shopping_list:
             del shopping_list[0]
