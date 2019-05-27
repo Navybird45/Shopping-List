@@ -10,10 +10,11 @@ def show_help():
     clear_screen()
     print("What should we pick up at the store? Enter items below.")
     print("""
-Enter 'DONE' to stop adding items.
+Enter 'DONE' or 'QUIT' to stop adding items.
 Enter 'HELP' for this help.
 Enter 'SHOW' to see your vcurrent list.
 Enter 'REMOVE' to delete an item from your list.
+Enter 'CLEAR' to clear your list.
 """)
         
 def add_to_list(item):
@@ -34,11 +35,22 @@ def add_to_list(item):
     else:
         shopping_list.append(new_item)
     
-    show_list()    
+    show_list() 
+
+def clear_list():
+    confirm_clear = input("Are you sure you would like to clear your list?\ny or n \n >")
+    if confirm_clear.upper() == "Y":
+        while shopping_list:
+            del shopping_list[0]
+        show_list()
+    if confirm_clear.upper() == "N":
+        print("Gotcha!")
+        show_list()
 def show_list():
     clear_screen()
     print("Here's your list:")
-    
+    if shopping_list:
+        print("-"*10)
     index = 1
     for item in shopping_list:
         print("{}.  {}".format(index,item))
@@ -69,6 +81,9 @@ while True:
         continue
     elif new_item.upper() == "REMOVE":
         remove_from_list()
+        continue
+    if new_item.upper() == "CLEAR":
+        clear_list()
         continue
     else:    
         add_to_list(new_item)
