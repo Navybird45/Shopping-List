@@ -70,14 +70,11 @@ def clear_list():
         show_list()
 def show_list():
     clear_screen()
+    
     print("Here's your list:")
-    if shopping_list:
-        print("-"*10)
-    index = 1
-    for item in shopping_list:
-        print("{}.  {}".format(index,item))
-        index += 1
-        
+    
+    for index, item in enumerate(shopping_list, start = 1):
+        print("{}. {}".format(index, item))
     print("-"*10)
         
 def remove_from_list():
