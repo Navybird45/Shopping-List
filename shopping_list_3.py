@@ -1,10 +1,6 @@
-import random
 import os
 
-high_score = [7]
-first_place = ["Jim-Bob"]
-low = 1
-high = 10
+shopping_list = []
 
 
 def clear_screen():
@@ -15,95 +11,122 @@ def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
 
 
-def welcome_to_game():
-    """Welcomes the player to the game and tells the
-    current high score and holder.
-    """
+def show_help():
+    """Clears screen, then shows help menu"""
+    clear_screen()
+    print("What should we pick up at the store? Enter items below.")
     print("""
-    ================================================
-    Welcome to the Number Guessing Extravaganza!!!!
-    ================================================
-    """)
-
-    print("""
-    The rules are simple; choose a number between 1
-    and 10, and we will tell you if the secret
-    number is higher or lower than that. Try and
-    guess the secret number in as few guesses as
-    possible!
-    """)
-    print("""
-    The current high score is {}, held by {}.
-    Try and beat it!
-    """.format(high_score[0], first_place[0]))
-    # This is a Test Line
-    # print("The number is {}".format(secret_number))
+Enter 'HELP' for this help.
+Enter 'SHOW' to see your current list.
+Enter 'MOVE' to move an item on your list.
+Enter 'REMOVE' to delete an item from your list.
+Enter 'CLEAR' to clear your list.
+Enter 'DONE' or 'QUIT' to stop adding items.
+""")
 
 
-def start_game():
-    """Welcomes user, picks a number between the low and high
-    variables, then asks user for a guess;
-    If guess is wrong, tells user if their guess was too
-    low or too high;
-    If guess is right, tells user they won, and if they beat
-    the high score asks them for their name;
-    Puts high score in high_score variable and sets
-    name to first place;
-    Asks user if they would like to play again.
-    """
-    global high_score
-    global first_place
-    secret_number = random.randint(low, high)
-    attempts = 0
-    welcome_to_game()
-    while True:
-        try:
-            guess = int(input("What is your guess?  "))
-        except ValueError:
-            print("Please enter a whole number!")
-            continue
-        if guess == secret_number:
-            attempts += 1
-            print("You got it!")
-            print(
-              "You guessed the secret number in {} try(s)!".format(attempts))
-            high_score.sort()
-            if high_score[0] > attempts:
-                first_place[0] = input("What is your name? ")
-                high_score.insert(0, attempts)
-
-                print("You have the new high score!")
-            else:
-                print("""The high score is currently {},
-                      held by {}""".format(high_score[0], first_place[0]))
-
-            print("Thanks for playing!")
-            replay = input("""
-                           Would you like to play again? [y]es or [n]o? """)
-            if replay == "n":
-                print("Thanks for playing!")
+def move_item():
+    """Asks user for item number to move, moves it to specified location"""
+    if len(shopping_list) > 1:
+        show_list()
+        while True:
+            try:
+                item_to_move = shopping_list.pop((int(input("""
+                What item number would you like to move?\n> """)))-1)
                 break
-            if replay == "y":
-                clear_screen()
-                start_game()
+            except ValueError:
+                print("Please enter a number")
+                continue
+            except IndexError:
+                print("Please enter a valid number")
+                continue
+        shopping_list.insert((int(input("""
+        What position should {} go in?\n>
+        """.format(item_to_move)))-1), item_to_move)
+        show_list()
+    else:
+        print("Your list has too few items to move!")
 
-        if 1 <= guess < secret_number:
-            attempts += 1
-            print("Too low!")
-            continue
-        if 11 >= guess > secret_number:
-            attempts += 1
-            print("Too high!")
-            continue
-        if guess > 10:
-            print("The number must be between 1 and 10.")
-            continue
-        if guess < 1:
-            print("The number must be between 1 and 10.")
-            continue
 
-if __name__ == '__main__':
-    """Starts game if being run from script,
-    not imported
-    """
-    start_game()
+def add_to_list(item):
+    """Adds inputed item to list in specified location"""
+    show_list()
+    if len(shopping_list):
+        position = input("Where should I add {}?\n"
+                         "Press ENTER to add to the end of the list\n"
+                         "> ".format(item))
+    else:
+        position = 0
+
+    try:
+        position = abs(int(position))
+    except ValueError:
+        position = None
+    if position is not None:
+        shopping_list.insert(position-1, item)
+    else:
+        shopping_list.append(new_item)
+
+    show_list()
+
+
+def clear_list():
+    """Asks for a confirm, then clears all items from list"""
+    confirm_clear = input("""
+    Are you sure you would like to clear your list?
+    [y]es or [n]o
+    >""")
+    if confirm_clear.upper() == "Y":
+        while shopping_list:
+            del shopping_list[0]
+        show_list()
+    if confirm_clear.upper() == "N":
+        print("Gotcha!")
+        show_list()
+
+
+def show_list():
+    """Prints out entire list to screen"""
+    clear_screen()
+    print("Here's your list:")
+
+    for index, item in enumerate(shopping_list, start=1):
+        print("{}. {}".format(index, item))
+    print("-"*10)
+
+
+def remove_from_list():
+    """Removes an item from the list by name"""
+    show_list()
+    what_to_remove = input("What would you like to remove?\n> ")
+    try:
+        shopping_list.remove(what_to_remove)
+    except ValueError:
+        pass
+    show_list()
+
+show_help()
+while True:
+    new_item = input("> ")
+
+    if new_item.upper() == "DONE" or new_item.upper() == "QUIT":
+            break
+    elif new_item.upper() == "HELP":
+            show_help()
+            continue
+    elif new_item.upper() == "SHOW":
+            show_list()
+            continue
+    elif new_item.upper() == "REMOVE":
+            remove_from_list()
+            continue
+    elif new_item.upper() == "MOVE":
+            move_item()
+            continue
+    elif new_item.upper() == "CLEAR":
+            clear_list()
+            continue
+    else:
+        add_to_list(new_item)
+
+show_list()
